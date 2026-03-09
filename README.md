@@ -2,7 +2,7 @@
 
 **OCI Drive** is a modern and intuitive web application designed to manage your files on **Oracle Cloud Infrastructure (OCI) Object Storage** with a user experience similar to Google Drive. It includes advanced multi-cloud synchronization and rapid file transfer features.
 
-![OCI Drive Favicon](static/images/oci_drive_02ß.png)
+![OCI Drive Favicon](static/images/oci_drive_01.png)
 
 ## 🚀 Key Features
 
