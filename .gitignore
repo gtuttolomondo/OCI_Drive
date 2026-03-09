@@ -1,0 +1,16 @@
+.env
+client_secret*.json
+__pycache__/
+*.pyc
+.DS_Store
+venv/
+.venv/
+instance/
+.pytest_cache/
+.coverage
+htmlcov/
+dist/
+build/
+*.egg-info/
+oci_drive_favicon*.png
+/tmp/

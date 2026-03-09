@@ -1,79 +1,79 @@
 # ☁️ OCI Drive - Secure Object Storage Manager
 
-**OCI Drive** è un'applicazione web moderna e intuitiva progettata per gestire i tuoi file su **Oracle Cloud Infrastructure (OCI) Object Storage** con un'esperienza utente simile a Google Drive. Include funzionalità avanzate di sincronizzazione multi-cloud e trasferimento file rapido.
+**OCI Drive** is a modern and intuitive web application designed to manage your files on **Oracle Cloud Infrastructure (OCI) Object Storage** with a user experience similar to Google Drive. It includes advanced multi-cloud synchronization and rapid file transfer features.
 
-![OCI Drive Favicon](static/images/favicon.png)
+![OCI Drive Favicon](static/images/oci_drive_02ß.png)
 
-## 🚀 Funzionalità Principali
+## 🚀 Key Features
 
-### 1. Gestione File Intuitiva
-- **Esplora Risorse:** Naviga tra file e cartelle nel tuo bucket OCI.
-- **Upload & Download:** Carica file tramite drag-and-drop e scaricali con un click.
-- **Anteprima Integrata:** Visualizza PDF, immagini, file di testo e documenti Word (`.docx`) direttamente nel browser.
-- **Organizzazione:** Crea, rinomina ed elimina cartelle e file in tempo reale.
+### 1. Intuitive File Management
+- **File Explorer:** Navigate through files and folders in your OCI bucket.
+- **Upload & Download:** Upload files via drag-and-drop and download them with a single click.
+- **Integrated Preview:** View PDFs, images, text files, and Word documents (`.docx`) directly in your browser.
+- **Organization:** Create, rename, and delete folders and files in real-time.
 
 ### 2. WeTransfer-Style (File Transfer) 🔗
-Condividi file in modo sicuro con chiunque tramite link temporanei:
-- **Folder Dedicata:** Una sezione "File Transfer" per gestire i file di scambio.
-- **Pre-Authenticated Requests (PAR):** Genera link pubblici che non richiedono login.
-- **Scadenza Personalizzata:** Imposta la validità del link (1 ora, 24 ore, 7 giorni o 30 giorni).
-- **Storico Link:** Visualizza i link attivi e le loro scadenze cliccando sull'icona della catena.
+Securely share files with anyone using temporary links:
+- **Dedicated Folder:** A "File Transfer" section to manage shared files.
+- **Pre-Authenticated Requests (PAR):** Generate public links that do not require login.
+- **Custom Expiration:** Set link validity (1 hour, 24 hours, 7 days, or 30 days).
+- **Link History:** View active links and their expiration dates by clicking the chain icon.
 
 ### 3. Google Drive Sync 🔄
-Sincronizzazione bidirezionale intelligente:
-- **Copia Multi-Cloud:** Importa intere cartelle o singoli file dal tuo Google Drive direttamente su OCI.
-- **Sanitizzazione Automatica:** Sistema i nomi dei file per renderli compatibili con gli standard OCI.
-- **Logging in Tempo Reale:** Monitora il processo di copia con indicazioni sui file saltati o già esistenti.
+Intelligent multi-cloud synchronization:
+- **Cloud-to-Cloud Copy:** Import entire folders or individual files from Google Drive directly to OCI.
+- **Automatic Sanitization:** Formats filenames to be compatible with OCI Object Storage standards.
+- **Real-Time Logging:** Monitor the copy process with indicators for skipped or existing files.
 
 ### 4. Offline Websites 🌐
-Cattura e archivia siti web completi:
-- Salva pagine web statiche direttamente nel tuo bucket.
-- Ideale per archiviare documentazione o riferimenti importanti da consultare offline.
+Capture and archive complete websites:
+- Save static web pages directly into your bucket.
+- Ideal for archiving documentation or important references for offline consultation.
 
-## 🛠️ Architettura e Logica
+## 🛠️ Architecture and Logic
 
-L'app è costruita con un approccio **Full-Stack Light**:
-- **Backend:** Flask (Python) che comunica con le API di Oracle Cloud tramite l'SDK ufficiale (`oci`).
-- **Frontend:** Interfaccia moderna con estetica **Glassmorphism**, costruita in Vanilla JS, HTML5 e CSS3.
-- **Storage:** Sfrutta OCI Object Storage per scalabilità illimitata e costi ridotti.
-- **Sicurezza:** Autenticazione Google OAuth2 per la sincronizzazione e gestione sicura delle credenziali OCI tramite file di configurazione protetti.
+The app is built with a **Full-Stack Light** approach:
+- **Backend:** Flask (Python) communicating with Oracle Cloud APIs via the official SDK (`oci`).
+- **Frontend:** Modern interface with **Glassmorphism** aesthetics, built using Vanilla JS, HTML5, and CSS3.
+- **Storage:** Leverages OCI Object Storage for unlimited scalability and low costs.
+- **Security:** Google OAuth2 authentication for sync and secure management of OCI credentials via protected configuration files.
 
-## ⚙️ Requisiti e Installazione
+## ⚙️ Requirements and Installation
 
-### 1. Prerequisiti
+### 1. Prerequisites
 - Python 3.10+
-- Un account Oracle Cloud con un Bucket creato.
-- Credenziali API Google (per la sincronizzazione).
+- An Oracle Cloud account with a created Bucket.
+- Google API Credentials (for synchronization).
 
-### 2. Configurazione `.env`
-Crea un file `.env` nella root del progetto con i seguenti dati:
+### 2. `.env` Configuration
+Create a `.env` file in the project root with the following details:
 ```env
 OCI_CONFIG_FILE=~/.oci/config
 OCI_CONFIG_PROFILE_NAME=DEFAULT
-OCI_NAMESPACE=iltuo_namespace
+OCI_NAMESPACE=your_namespace
 OCI_BUCKET_NAME=oci-drive
 OCI_COMPARTMENT_ID=ocid1.compartment.oc1..xxxx
 
-FLASK_SECRET_KEY=una_chiave_segreta_molto_lunga
+FLASK_SECRET_KEY=a_very_long_secret_key
 
-GOOGLE_CLIENT_ID=tuo_id.apps.googleusercontent.com
-GOOGLE_CLIENT_SECRET=tua_segreta
+GOOGLE_CLIENT_ID=your_id.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=your_secret
 GOOGLE_REDIRECT_URI=http://127.0.0.1:5001/api/gdrive/callback
 ```
 
-### 3. Avvio
+### 3. Running the App
 ```bash
 pip install -r requirements.txt
 python app.py
 ```
-L'app sarà disponibile su `http://127.0.0.1:5001`.
+The app will be available at `http://127.0.0.1:5001`.
 
-## 📁 Struttura del Progetto
-- `app.py`: Punto d'ingresso e rotte API.
-- `oci_client.py`: Wrapper logico per tutte le operazioni su Oracle Cloud.
-- `static/js/main.js`: Logica dell'interfaccia e interazioni asincrone.
-- `static/css/style.css`: Design di sistema (Glassmorphism).
-- `templates/index.html`: Struttura della Single Page Application.
+## 📁 Project Structure
+- `app.py`: Entry point and API routes.
+- `oci_client.py`: Logic wrapper for all Oracle Cloud operations.
+- `static/js/main.js`: UI logic and asynchronous interactions.
+- `static/css/style.css`: Design system (Glassmorphism).
+- `templates/index.html`: Single Page Application structure.
 
 ---
-*Progettato per essere veloce, sicuro e scalabile.* 🚀
+*Designed to be fast, secure, and scalable.* 🚀
