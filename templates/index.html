@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OCI Drive | Secure Object Storage</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
+    <!-- Docx Viewer Library -->
+    <script src="https://unpkg.com/jszip/dist/jszip.min.js"></script>
+    <script src="https://unpkg.com/docx-preview/dist/docx-preview.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <header>
+        <button class="action-btn" id="sidebar-toggle" style="margin-right: 15px; font-size: 20px;">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="logo">
+            <i class="fas fa-cloud"></i>
+            OCI Drive
+        </div>
+        <div class="user-profile">
+            <span id="storage-info" style="font-size: 14px; color: var(--text-muted);">
+                <i class="fas fa-database"></i> OCI Object Storage
+            </span>
+        </div>
+    </header>
+
+    <aside class="sidebar" id="sidebar">
+        <nav>
+            <a href="#" class="sidebar-item active" id="nav-files">
+                <i class="fas fa-folder"></i>
+                <span>My Files</span>
+            </a>
+            <a href="#" class="sidebar-item" id="nav-offline">
+                <i class="fas fa-globe"></i>
+                <span>Offline Websites</span>
+            </a>
+            <a href="#" class="sidebar-item" id="nav-sync">
+                <i class="fab fa-google-drive"></i>
+                <span>Google Drive Sync</span>
+            </a>
+            <a href="#" class="sidebar-item" id="nav-file-transfer">
+                <i class="fas fa-link"></i>
+                <span>File Transfer</span>
+            </a>
+            <a href="#" class="sidebar-item" id="nav-settings">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </a>
+            <!-- Future features can be added here -->
+            <div class="sidebar-divider"></div>
+            <div style="padding: 20px; font-size: 12px; color: var(--text-muted); opacity: 0.6;">
+                More features coming soon...
+            </div>
+        </nav>
+    </aside>
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <main class="content-wrapper">
+        <div id="files-view">
+            <div class="breadcrumb" id="breadcrumb">
+                <a href="#" data-path=""><i class="fas fa-home"></i> Home</a>
+            </div>
+
+            <div class="controls">
+                <h1 id="current-folder-name">My Files</h1>
+                <div class="actions" style="display: flex; gap: 12px;">
+                    <button class="btn" id="new-folder-trigger">
+                        <i class="fas fa-folder-plus"></i> New Folder
+                    </button>
+                    <button class="btn btn-primary" id="upload-trigger">
+                        <i class="fas fa-plus"></i> Upload File
+                    </button>
+                </div>
+            </div>
+
+            <div class="file-list" id="file-list">
+                <div style="padding: 40px; text-align: center; color: var(--text-muted);">
+                    <i class="fas fa-spinner fa-spin fa-2x"></i>
+                    <p style="margin-top: 10px;">Loading your files...</p>
+                </div>
+            </div>
+        </div>
+        <div id="settings-view" style="display: none;">
+            <div class="controls">
+                <h1>Application Settings</h1>
+            </div>
+
+            <div class="file-list" style="padding: 32px;">
+                <p style="color: var(--text-muted); margin-bottom: 30px;">Manage your environment variables
+                    directly. These changes affect the <code
+                        style="background: #f1f5f9; padding: 2px 6px; border-radius: 4px;">.env</code> file.</p>
+
+                <form id="settings-form">
+                    <div id="settings-fields-container">
+                        <!-- Fields will be injected here -->
+                        <div style="text-align: center; padding: 20px;">
+                            <i class="fas fa-spinner fa-spin"></i> Loading settings...
+                        </div>
+                    </div>
+
+                    <div
+                        style="margin-top: 32px; display: flex; justify-content: flex-end; gap: 12px; border-top: 1px solid var(--border); padding-top: 24px;">
+                        <button type="button" class="btn" id="reset-settings">Discard Changes</button>
+                        <button type="submit" class="btn btn-primary" id="save-settings">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div id="file-transfer-view" style="display: none;">
+            <div class="controls">
+                <h1>File Transfer</h1>
+                <div class="actions" style="display: flex; gap: 12px;">
+                    <button class="btn btn-primary" id="ft-upload-trigger">
+                        <i class="fas fa-plus"></i> Upload & Share
+                    </button>
+                </div>
+            </div>
+
+            <div
+                style="background: rgba(37, 99, 235, 0.05); padding: 20px; border-radius: 12px; margin-bottom: 30px; border: 1px solid rgba(37, 99, 235, 0.1);">
+                <p style="font-size: 14px; color: var(--text);">
+                    <i class="fas fa-info-circle" style="color: var(--primary); margin-right: 8px;"></i>
+                    Upload files here to generate secure, temporary download links (WeTransfer style).
+                </p>
+            </div>
+
+            <div class="file-list" id="ft-file-list">
+                <div style="padding: 40px; text-align: center; color: var(--text-muted);">
+                    <i class="fas fa-spinner fa-spin fa-2x"></i>
+                    <p style="margin-top: 10px;">Loading transfer files...</p>
+                </div>
+            </div>
+        </div>
+        <div id="offline-view" style="display: none;">
+            <div class="controls">
+                <h1>Offline Websites</h1>
+            </div>
+
+            <div class="file-list" style="padding: 32px;">
+                <p style="color: var(--text-muted); margin-bottom: 30px;">
+                    Enter a website URL to capture it as a single HTML file and save it to your Object Storage.
+                </p>
+
+                <form id="offline-form">
+                    <div class="settings-group">
+                        <label class="settings-label" for="offline-url">Website URL</label>
+                        <input type="url" class="settings-input" id="offline-url" placeholder="https://example.com"
+                            required>
+                        <span class="settings-help">The full URL of the page you want to save.</span>
+                    </div>
+
+                    <div class="settings-group">
+                        <label class="settings-label" for="offline-folder">Save in Folder</label>
+                        <select class="settings-input" id="offline-folder">
+                            <option value="">/ (Root)</option>
+                            <!-- Folders will be injected here -->
+                        </select>
+                        <span class="settings-help">Choose the destination folder in your bucket.</span>
+                    </div>
+
+                    <div class="settings-group">
+                        <label class="settings-label" for="offline-filename">Filename (optional)</label>
+                        <input type="text" class="settings-input" id="offline-filename" placeholder="mysite">
+                        <span class="settings-help">Leave empty to use the page title. ".html" will be added
+                            automatically.</span>
+                    </div>
+
+                    <div id="offline-status"
+                        style="display: none; margin-top: 20px; padding: 15px; border-radius: 8px; background: #f0f9ff; color: var(--primary);">
+                        <i class="fas fa-spinner fa-spin"></i> <span id="offline-status-text">Capturing
+                            website...</span>
+                    </div>
+
+                    <div
+                        style="margin-top: 32px; display: flex; justify-content: flex-end; gap: 12px; border-top: 1px solid var(--border); padding-top: 24px;">
+                        <button type="submit" class="btn btn-primary" id="save-offline">Capture & Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div id="sync-view" style="display: none;">
+            <div class="controls">
+                <h1>Google Drive Sync</h1>
+            </div>
+
+            <div class="file-list" style="padding: 32px; text-align: center;">
+                <div id="sync-auth-section">
+                    <i class="fab fa-google-drive fa-4x" style="color: #4285F4; margin-bottom: 20px;"></i>
+                    <h2>Connect your Google Drive</h2>
+                    <p
+                        style="color: var(--text-muted); margin-bottom: 30px; max-width: 500px; margin-left: auto; margin-right: auto;">
+                        Authorize this application to access your Google Drive files. We will copy your data directly to
+                        your OCI Object Storage bucket.
+                    </p>
+                    <button class="btn btn-primary" id="btn-sync-auth">
+                        <i class="fas fa-link"></i> Connect Google Account
+                    </button>
+                </div>
+
+                <div id="sync-process-section" style="display: none;">
+                    <i class="fas fa-sync fa-spin fa-4x" style="color: var(--primary); margin-bottom: 20px;"></i>
+                    <h2>Ready to Sync</h2>
+                    <p style="color: var(--text-muted); margin-bottom: 30px;">
+                        Select a destination folder in OCI and start the migration.
+                    </p>
+
+                    <div style="max-width: 400px; margin: 0 auto; text-align: left;">
+                        <label class="settings-label" for="sync-folder">Destination Folder (OCI)</label>
+                        <select class="settings-input" id="sync-folder">
+                            <option value="">/ (Root)</option>
+                            <!-- Folders will be injected here -->
+                        </select>
+                    </div>
+
+                    <div id="sync-status"
+                        style="display: none; margin-top: 30px; padding: 20px; border-radius: 12px; background: #f0f9ff; color: var(--primary);">
+                        <i class="fas fa-spinner fa-spin"></i> <span id="sync-status-text">Migrating files...</span>
+                    </div>
+
+                    <button class="btn btn-primary" id="btn-start-sync" style="margin-top: 30px;">
+                        <i class="fas fa-cloud-download-alt"></i> Start Migration
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- New Folder Modal -->
+    <div class="modal" id="folder-modal">
+        <div class="modal-content">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 24px;">
+                <h2 style="font-size: 20px;">New Folder</h2>
+                <button class="action-btn" id="close-folder-modal"><i class="fas fa-times"></i></button>
+            </div>
+
+            <div style="margin-bottom: 24px;">
+                <label for="folder-name-input"
+                    style="display: block; font-size: 14px; color: var(--text-muted); margin-bottom: 8px;">Folder
+                    Name</label>
+                <input type="text" id="folder-name-input" placeholder="Untitled Folder"
+                    style="width: 100%; padding: 12px; background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; color: var(--text); outline: none;">
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 12px;">
+                <button class="btn" style="background: transparent; color: var(--text);"
+                    id="cancel-folder">Cancel</button>
+                <button class="btn btn-primary" id="create-folder-btn">Create</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload Modal -->
+    <div class="modal" id="upload-modal">
+        <div class="modal-content">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 24px;">
+                <h2 style="font-size: 20px;">Upload File</h2>
+                <button class="action-btn" id="close-modal"><i class="fas fa-times"></i></button>
+            </div>
+
+            <div class="upload-area" id="drop-area">
+                <i class="fas fa-cloud-upload-alt fa-3x" style="color: var(--secondary); margin-bottom: 16px;"></i>
+                <p>Drag and drop files here or click to browse</p>
+                <input type="file" id="file-input" style="display: none;">
+            </div>
+
+            <div id="upload-status" style="display: none; margin-bottom: 16px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px;">
+                    <span id="status-text">Uploading...</span>
+                    <span id="percent-text">0%</span>
+                </div>
+                <div style="height: 4px; background: #e2e8f0; border-radius: 2px;">
+                    <div id="progress-bar"
+                        style="height: 100%; width: 0%; background: var(--primary); border-radius: 2px; transition: width 0.3s;">
+                    </div>
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 12px;">
+                <button class="btn" style="background: transparent; color: var(--text);"
+                    id="cancel-upload">Cancel</button>
+                <button class="btn btn-primary" id="start-upload" disabled>Upload</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Preview Modal -->
+    <div class="modal preview-modal" id="preview-modal">
+        <div class="modal-content preview-content">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 24px;">
+                <h2 id="preview-title" style="font-size: 20px;">Preview</h2>
+                <div style="display: flex; gap: 12px;">
+                    <button class="btn btn-primary" id="preview-download-btn"><i class="fas fa-download"></i></button>
+                    <button class="action-btn" id="close-preview"><i class="fas fa-times"></i></button>
+                </div>
+            </div>
+
+            <div id="preview-container" class="preview-container">
+                <!-- Viewer will be injected here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Rename Modal -->
+    <div class="modal" id="rename-modal">
+        <div class="modal-content">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 24px;">
+                <h2 style="font-size: 20px;">Rename</h2>
+                <button class="action-btn" id="close-rename-modal"><i class="fas fa-times"></i></button>
+            </div>
+
+            <div style="margin-bottom: 24px;">
+                <label for="rename-input"
+                    style="display: block; font-size: 14px; color: var(--text-muted); margin-bottom: 8px;">New
+                    Name</label>
+                <input type="text" id="rename-input"
+                    style="width: 100%; padding: 12px; background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; color: var(--text); outline: none;">
+                <input type="hidden" id="old-name-hidden">
+                <input type="hidden" id="rename-type-hidden">
+            </div>
+
+            <div style="display: flex; justify-content: flex-end; gap: 12px;">
+                <button class="btn" style="background: transparent; color: var(--text);"
+                    id="cancel-rename">Cancel</button>
+                <button class="btn btn-primary" id="confirm-rename-btn">Rename</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="par-modal">
+        <div class="modal-content">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 24px;">
+                <h2 style="font-size: 20px;">Generate Share Link</h2>
+                <button class="action-btn" id="close-par-modal"><i class="fas fa-times"></i></button>
+            </div>
+
+            <div id="par-setup">
+                <div style="margin-bottom: 24px;">
+                    <label for="par-expiry"
+                        style="display: block; font-size: 14px; color: var(--text-muted); margin-bottom: 8px;">Link
+                        Expiration</label>
+                    <select id="par-expiry"
+                        style="width: 100%; padding: 12px; background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; color: var(--text); outline: none;">
+                        <option value="1">1 Hour</option>
+                        <option value="24" selected>24 Hours</option>
+                        <option value="168">7 Days</option>
+                        <option value="720">30 Days</option>
+                    </select>
+                </div>
+
+                <button class="btn btn-primary" id="ft-generate-btn" style="width: 100%; justify-content: center;">
+                    Generate Link
+                </button>
+            </div>
+
+            <div id="par-result" style="display: none;">
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; font-size: 14px; color: var(--text-muted); margin-bottom: 8px;">
+                        <i class="fas fa-link" style="margin-right: 4px;"></i> Your Public Link:
+                    </label>
+                    <div style="display: flex; gap: 8px;">
+                        <input type="text" id="par-url-input" readonly
+                            style="flex: 1; padding: 12px; background: #f1f5f9; border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-size: 13px;">
+                        <button class="btn" id="copy-par-btn" title="Copy to clipboard"><i
+                                class="fas fa-copy"></i></button>
+                    </div>
+                </div>
+                <p style="font-size: 12px; color: var(--text-muted);">
+                    <i class="fas fa-clock" style="margin-right: 4px;"></i> Expires on: <span
+                        id="par-expiry-date"></span>
+                </p>
+                <div style="margin-top: 24px; text-align: right;">
+                    <button class="btn" id="par-done-btn">Done</button>
+                </div>
+            </div>
+
+            <div id="existing-pars-section"
+                style="margin-top: 20px; border-top: 1px dashed var(--border); padding-top: 16px; display: none;">
+                <label
+                    style="display: block; font-size: 13px; font-weight: 600; color: var(--text-muted); margin-bottom: 8px;">Active
+                    Share Links</label>
+                <div id="pars-list" style="display: flex; flex-direction: column; gap: 8px;">
+                    <!-- Existing PARs list -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+
+</html>
